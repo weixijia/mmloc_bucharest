@@ -13,25 +13,25 @@ from sklearn.metrics import mean_squared_error
 from keras.optimizers import Adam, RMSprop
 from keras.utils import plot_model
 from keras.callbacks import EarlyStopping, Callback, TensorBoard
-import wandb
-from wandb.keras import WandbCallback
+# import wandb
+# from wandb.keras import WandbCallback
 # Hyper-parameters
 sensor_input_size = 3
 wifi_input_size = 43
 hidden_size = 128
 batch_size = 100
 output_dim = 2
-num_epochs = 100
+num_epochs = 1
 learning_rate = 0.001
 
 model_name = "mmloc_bucharest"
 
-wandb.init(entity="mmloc",project=model_name,sync_tensorboard=True,
-           config={"epochs": num_epochs,"batch_size": batch_size,"wifi_hidden_size":hidden_size,
-                   "learning_rate":learning_rate,"sensor_input_size":sensor_input_size,
-                   "wifi_input_size":wifi_input_size,"output_dim":output_dim
-                   }
-           )
+# wandb.init(entity="mmloc",project=model_name,sync_tensorboard=True,
+#            config={"epochs": num_epochs,"batch_size": batch_size,"wifi_hidden_size":hidden_size,
+#                    "learning_rate":learning_rate,"sensor_input_size":sensor_input_size,
+#                    "wifi_input_size":wifi_input_size,"output_dim":output_dim
+#                    }
+#            )
 
 
 #load downsample dataset
@@ -74,13 +74,14 @@ tensorboard = TensorBoard(log_dir='logs/{}'.format(model_name))
 
 mmloc.fit([SensorTrain,WifiTrain], locationtrain,
                        validation_data=([SensorVal,WifiVal],locationval),
-                       epochs=num_epochs, batch_size=batch_size, verbose=1,callbacks=[tensorboard,WandbCallback()]
+                       #epochs=num_epochs, batch_size=batch_size, verbose=1,callbacks=[tensorboard,WandbCallback()]
+                       epochs=num_epochs, batch_size=batch_size, verbose=1,callbacks=[tensorboard]
                        #shuffle=False,
                        )
 
 #save model
-mmloc.save("romaniamodel/"+str(model_name)+".h5")
-mmloc.save(os.path.join(wandb.run.dir, "wanbd_"+str(model_name)+".h5"))
+mmloc.save("buchamodel/"+str(model_name)+".h5")
+# mmloc.save(os.path.join(wandb.run.dir, "wanbd_"+str(model_name)+".h5"))
 fig1=plt.figure()
 locPrediction = mmloc.predict([SensorTest,WifiTest], batch_size=batch_size)
 aveLocPrediction = pf.get_ave_prediction(locPrediction, batch_size)
@@ -90,8 +91,8 @@ plt.legend(['target','prediction'],loc='upper right')
 plt.xlabel("x-latitude")
 plt.ylabel("y-longitude")
 plt.title(str(model_name)+" Prediction")
-fig1.savefig("romaniapredictionpng/"+str(model_name)+"_locprediction.png")
-wandb.log({"chart": wandb.Image("romaniapredictionpng/"+str(model_name)+"_locprediction.png")})
+fig1.savefig("buchapredictionpng/"+str(model_name)+"_locprediction.png")
+# wandb.log({"chart": wandb.Image("romaniapredictionpng/"+str(model_name)+"_locprediction.png")})
 #draw cdf picture
 
 fig=plt.figure()
@@ -104,5 +105,5 @@ plt.ylabel("CDF")
 plt.legend(str(model_name),loc='upper right')
 plt.grid(True)
 plt.title((str(model_name)+' CDF'))
-fig.savefig("romaniacdf/"+str(model_name)+"_CDF.pdf")
-wandb.log({"chart": wandb.Image("romaniacdf/"+str(model_name)+"_CDF.pdf")})
+fig.savefig("buchacdf/"+str(model_name)+"_CDF.pdf")
+# wandb.log({"chart": wandb.Image("romaniacdf/"+str(model_name)+"_CDF.pdf")})

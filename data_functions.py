@@ -363,7 +363,7 @@ def downsample_data(file_start, file_end, tw,slide):
     wifidata=np.array(wifidata)
     L = len(input_data)
     total_samples=(L-tw)//slide+1
-    print(total_samples)
+    #print(total_samples)
     input_data=np.array(input_data)
     for i in range (total_samples):
         train_seq = input_data[i*slide:i*slide+tw,0:3]# 1000*3

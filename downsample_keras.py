@@ -12,7 +12,7 @@ import os
 import json
 import plotting_functions as pf
 import pandas as pd
-import wandb
+# import wandb
 from keras import metrics
 from data_functions import normalisation,overlap_data,read_overlap_data,downsample_data,DownsampleDataset
 from keras.models import Sequential,Model,load_model
@@ -22,7 +22,7 @@ from sklearn.metrics import mean_squared_error
 from keras.optimizers import Adam, RMSprop
 from keras.utils import plot_model
 from keras.callbacks import EarlyStopping, Callback, TensorBoard
-from wandb.keras import WandbCallback
+# from wandb.keras import WandbCallback
 
 np.random.seed(7)
 # Hyper-parameters
@@ -36,14 +36,14 @@ lstm_hidden_units = 128
 LR = 0.001
 epoch=100
 
-model_name = "sensorDownsample_bucharest"
+model_name = "sensor_bucharest"
 
-wandb.init(entity="mmloc",project=model_name,sync_tensorboard=True,
-           config={"epochs": epoch,"batch_size": batch_size,"hidden_size":hidden_size,
-                   "learning_rate":LR,"sensor_input_size":input_size,
-                   "output_dim":output_dim,"lstm_hidden_units":lstm_hidden_units
-                   }
-           )
+# wandb.init(entity="mmloc",project=model_name,sync_tensorboard=True,
+#            config={"epochs": epoch,"batch_size": batch_size,"hidden_size":hidden_size,
+#                    "learning_rate":LR,"sensor_input_size":input_size,
+#                    "output_dim":output_dim,"lstm_hidden_units":lstm_hidden_units
+#                    }
+#            )
 
 train_sensor=DownsampleDataset()
 SensorTrain=train_sensor.sensortrain
@@ -64,12 +64,12 @@ model.compile(optimizer=RMSprop(LR),
 
 model.fit(SensorTrain, locationtrain,
                        validation_data=(SensorVal,locationval),
-                       epochs=epoch, batch_size=batch_size, verbose=1,callbacks=[tensorboard,WandbCallback()]
+                       epochs=epoch, batch_size=batch_size, verbose=1,callbacks=[tensorboard]
                        #shuffle=False,
                        )
 
-model.save("romaniamodel/"+str(model_name)+".h5")
-model.save(os.path.join(wandb.run.dir, "wanbd_"+str(model_name)+".h5"))
+model.save("buchamodel/"+str(model_name)+".h5")
+#model.save(os.path.join(wandb.run.dir, "wanbd_"+str(model_name)+".h5"))
 fig1=plt.figure()
 locPrediction = model.predict(SensorTest, batch_size=batch_size)
 aveLocPrediction = pf.get_ave_prediction(locPrediction, batch_size)
@@ -79,10 +79,10 @@ plt.legend(['target','prediction'],loc='upper right')
 plt.xlabel("x-latitude")
 plt.ylabel("y-longitude")
 plt.title(str(model_name)+" Prediction")
-fig1.savefig("romaniapredictionpng/"+str(model_name)+"_locprediction.png")
-wandb.log({"chart": wandb.Image("romaniapredictionpng/"+str(model_name)+"_locprediction.png")})
-#draw cdf picture
+fig1.savefig("buchapredictionpng/"+str(model_name)+"_locprediction.png")
+#wandb.log({"chart": wandb.Image("romaniapredictionpng/"+str(model_name)+"_locprediction.png")})
 
+#draw cdf picture
 fig=plt.figure()
 bin_edge,cdf=pf.cdfdiff(target=locationtest,predict=locPrediction)
 plt.plot(bin_edge[0:-1],cdf,linestyle='--',label=str(model_name),color='r')
@@ -90,8 +90,7 @@ plt.xlim(xmin = 0)
 plt.ylim((0,1))
 plt.xlabel("metres")
 plt.ylabel("CDF")
-plt.legend("sensor_downsample",loc='upper right')
+plt.legend(str(model_name),loc='upper right')
 plt.grid(True)
 plt.title((str(model_name)+' CDF'))
-fig.savefig("romaniacdf/"+str(model_name)+"_CDF.pdf")
-wandb.log({"chart": wandb.Image("romaniacdf/"+str(model_name)+"_CDF.pdf")})
+fig.savefig("buchacdf/"+str(model_name)+"_CDF.pdf")
