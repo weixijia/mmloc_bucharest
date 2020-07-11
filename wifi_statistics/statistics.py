@@ -38,6 +38,29 @@ import glob
 
 Bucharest = pd.read_csv('scenario1-1.csv',dtype=np.float64)
 Bucharest_WiFi = Bucharest.iloc[:,3:-1]
-aaa=Bucharest_WiFi.describe().T.assign(num_zeros = Bucharest_WiFi.apply(lambda x : x.value_counts().get(0),axis=0))
+Analyse_per_ap=Bucharest_WiFi.copy()
+Analyse_per_loc=Bucharest_WiFi.copy()
+Analyse_per_ap.replace(0, np.nan, inplace=True)
+statistic=Analyse_per_ap.describe().T.assign(apear_rate = Analyse_per_ap.apply(lambda x : 1-(x.isnull().sum() / len(Bucharest_WiFi))))
 # print(Bucharest_WiFi.describe())
-print(aaa)
+#print(statistic)
+
+weak_ap = statistic[(statistic['75%']<0.166667) | (statistic['apear_rate']<0.3)].index.tolist() #0.166667 represent normalised -90dBm | missing ratio 70% represents more than 0.7 of each ap are missing values
+
+#describe(exclude=['Unnamed: 0','t','delta_t','match'])
+
+# b=Bucharest_WiFi.columns[['ap0']:['ap43']]
+
+# df.columns.difference(['b'])
+
+# c=(df.columns.difference(['b'].tolist())
+#Bucharest_WiFi.groupby(Bucharest_WiFi.columns.tolist()).value_counts().to_frame('count')
+
+count=Analyse_per_loc.groupby(Analyse_per_loc.columns.tolist()).size()
+print(count)
+# print(Bucharest_WiFi.groupby(Bucharest_WiFi.columns.tolist()).size())
+
+# bbb=Bucharest_WiFi.groupby(Bucharest_WiFi.columns.tolist())
+
+ccc=Analyse_per_loc.groupby(Analyse_per_loc.columns.tolist()).size().reset_index().\
+    rename(columns={0:'records'})
