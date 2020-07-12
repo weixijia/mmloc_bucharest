@@ -47,7 +47,8 @@ ap_statistic=Analyse_per_ap.describe().T.assign(apear_rate = Analyse_per_ap.appl
 #print(statistic)
 
 weak_ap = ap_statistic[(ap_statistic['75%']<0.166667) | (ap_statistic['apear_rate']<0.3)].index.tolist() #0.166667 represent normalised -90dBm | missing ratio 70% represents more than 0.7 of each ap are missing values
-
+ap_statistic
+print('weak aps are: ',weak_ap)
 #describe(exclude=['Unnamed: 0','t','delta_t','match'])
 
 # b=Bucharest_WiFi.columns[['ap0']:['ap43']]
@@ -74,4 +75,4 @@ loc_statistic=Analyse_per_loc.T.describe().T
 loc_statistic['density']=1-Analyse_per_loc.isnull().sum(axis=1)/Bucharest_WiFi.shape[1]
 loc_statistic['repeat']=temp_group_count_df['repeat'].to_list()
 # print(Bucharest_WiFi.groupby(Bucharest_WiFi.columns.tolist()).size())
-
+loc_statistic
