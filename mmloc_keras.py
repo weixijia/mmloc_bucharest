@@ -60,8 +60,8 @@ wifi=Dense(hidden_size)(wifi)
 wifi=ReLU()(wifi)
 wifioutput=Dense(hidden_size)(wifi)
 
-#merge style: multiply
-merge=Multiply()([sensoroutput,wifioutput])
+#merge style: concatenate
+merge=concatenate([sensoroutput,wifioutput])
 hidden=Dense(hidden_size,activation='relu')(merge)
 output=Dense(output_dim,activation='relu')(hidden)
 mmloc=Model(inputs=[sensorinput,wifiinput],outputs=[output])
