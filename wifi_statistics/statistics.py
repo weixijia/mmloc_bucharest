@@ -35,17 +35,18 @@ import glob
 
 # print('Bucharest Rich info: '+str(RSSperAP_bucha.mean() *100)+' %')
 # print('Edinburgh Rich info: '+str(RSSperAP_edin.mean() *100)+' %') 
-
 Bucharest = pd.read_csv('scenario1-1.csv',dtype=np.float64)
+Bucharest.index = ['loc'+str(i) for i in range(len(Bucharest))]
+
 Bucharest_WiFi = Bucharest.iloc[:,3:-1]
 Analyse_per_ap=Bucharest_WiFi.copy()
 Analyse_per_loc=Bucharest_WiFi.copy()
 Analyse_per_ap.replace(0, np.nan, inplace=True)
-statistic=Analyse_per_ap.describe().T.assign(apear_rate = Analyse_per_ap.apply(lambda x : 1-(x.isnull().sum() / len(Bucharest_WiFi))))
+ap_statistic=Analyse_per_ap.describe().T.assign(apear_rate = Analyse_per_ap.apply(lambda x : 1-(x.isnull().sum() / len(Bucharest_WiFi))))
 # print(Bucharest_WiFi.describe())
 #print(statistic)
 
-weak_ap = statistic[(statistic['75%']<0.166667) | (statistic['apear_rate']<0.3)].index.tolist() #0.166667 represent normalised -90dBm | missing ratio 70% represents more than 0.7 of each ap are missing values
+weak_ap = ap_statistic[(ap_statistic['75%']<0.166667) | (ap_statistic['apear_rate']<0.3)].index.tolist() #0.166667 represent normalised -90dBm | missing ratio 70% represents more than 0.7 of each ap are missing values
 
 #describe(exclude=['Unnamed: 0','t','delta_t','match'])
 
@@ -56,11 +57,18 @@ weak_ap = statistic[(statistic['75%']<0.166667) | (statistic['apear_rate']<0.3)]
 # c=(df.columns.difference(['b'].tolist())
 #Bucharest_WiFi.groupby(Bucharest_WiFi.columns.tolist()).value_counts().to_frame('count')
 
-count=Analyse_per_loc.groupby(Analyse_per_loc.columns.tolist()).size()
-print(count)
+
+temp_group_count_df = (Analyse_per_loc.fillna('')\
+      .groupby(Analyse_per_loc.columns.tolist()).apply(len)\
+      .rename('group_count')\
+      .reset_index()\
+      .replace('',np.nan)\
+      .sort_values(by = ['group_count'], ascending = False))
+    
+loc_statistic=Analyse_per_loc.copy().T
+loc_statistic=loc_statistic.describe().T
+loc_statistic['group_count']=temp_group_count_df['group_count']
+loc_statistic['density']=Analyse_per_loc.apply( lambda s : s.value_counts().get(key=0,default=0), axis=1)
+
 # print(Bucharest_WiFi.groupby(Bucharest_WiFi.columns.tolist()).size())
 
-# bbb=Bucharest_WiFi.groupby(Bucharest_WiFi.columns.tolist())
-
-ccc=Analyse_per_loc.groupby(Analyse_per_loc.columns.tolist()).size().reset_index().\
-    rename(columns={0:'records'})
