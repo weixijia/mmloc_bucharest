@@ -55,20 +55,23 @@ weak_ap = ap_statistic[(ap_statistic['75%']<0.166667) | (ap_statistic['apear_rat
 # df.columns.difference(['b'])
 
 # c=(df.columns.difference(['b'].tolist())
-#Bucharest_WiFi.groupby(Bucharest_WiFi.columns.tolist()).value_counts().to_frame('count')
 
-
+#count duplicate RSS as
 temp_group_count_df = (Analyse_per_loc.fillna('')\
       .groupby(Analyse_per_loc.columns.tolist()).apply(len)\
-      .rename('group_count')\
+      .rename('repeat')\
       .reset_index()\
       .replace('',np.nan)\
-      .sort_values(by = ['group_count'], ascending = False))
-    
-loc_statistic=Analyse_per_loc.copy().T
-loc_statistic=loc_statistic.describe().T
-loc_statistic['group_count']=temp_group_count_df['group_count']
-loc_statistic['density']=Analyse_per_loc.apply( lambda s : s.value_counts().get(key=0,default=0), axis=1)
+      .sort_values(by = ['repeat']))
+# then reset the index as int and reorder index from 0 to n
+temp_group_count_df.index = temp_group_count_df.index.astype(int) 
+temp_group_count_df = temp_group_count_df.sort_index()
 
+#loc_statistic=Analyse_per_loc.copy().T
+
+Analyse_per_loc.replace(0, np.nan, inplace=True)
+loc_statistic=Analyse_per_loc.T.describe().T
+loc_statistic['density']=1-Analyse_per_loc.isnull().sum(axis=1)/Bucharest_WiFi.shape[1]
+loc_statistic['repeat']=temp_group_count_df['repeat'].to_list()
 # print(Bucharest_WiFi.groupby(Bucharest_WiFi.columns.tolist()).size())
 
