@@ -46,7 +46,7 @@ ap_statistic=Analyse_per_ap.describe().T.assign(apear_rate = Analyse_per_ap.appl
 # print(Bucharest_WiFi.describe())
 #print(statistic)
 
-weak_ap = ap_statistic[(ap_statistic['75%']<0.166667) | (ap_statistic['apear_rate']<0.3)].index.tolist() #0.166667 represent normalised -90dBm | missing ratio 70% represents more than 0.7 of each ap are missing values
+weak_ap = ap_statistic[(ap_statistic['75%']<0.166667) | (ap_statistic['apear_rate']<0.1)].index.tolist() #0.166667 represent normalised -90dBm | missing ratio 70% represents more than 0.7 of each ap are missing values
 ap_statistic
 print('weak aps are: ',weak_ap)
 #describe(exclude=['Unnamed: 0','t','delta_t','match'])
