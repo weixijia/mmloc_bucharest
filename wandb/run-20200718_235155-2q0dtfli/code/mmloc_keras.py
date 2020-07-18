@@ -74,7 +74,8 @@ tensorboard = TensorBoard(log_dir='logs/{}'.format(model_name))
 
 mmloc.fit([SensorTrain,WifiTrain], locationtrain,
                        validation_data=([SensorVal,WifiVal],locationval),
-                       epochs=num_epochs, batch_size=batch_size, verbose=1,callbacks=[tensorboard,WandbCallback()]
+                       #epochs=num_epochs, batch_size=batch_size, verbose=1,callbacks=[tensorboard,WandbCallback()]
+                       epochs=num_epochs, batch_size=batch_size, verbose=1,callbacks=[tensorboard]
                        #shuffle=False,
                        )
 

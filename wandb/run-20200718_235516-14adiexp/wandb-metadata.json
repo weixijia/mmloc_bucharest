@@ -1,0 +1,24 @@
+{
+    "root": "/Users/weixijia/Documents/mmloc_bucharest",
+    "program": "/Users/weixijia/Documents/mmloc_bucharest/mmloc_keras.py",
+    "git": {
+        "remote": "https://github.com/geekwxj/mmloc_bucharest.git",
+        "commit": "c9be6828ee59f4adf3d894baef095e8a4e84c653"
+    },
+    "email": "jsd1994wxj@gmail.com",
+    "codePath": "mmloc_keras.py",
+    "startedAt": "2020-07-18T15:55:16.666762",
+    "host": "Mac-mini.local",
+    "username": "weixijia",
+    "executable": "/Users/weixijia/opt/anaconda3/envs/mmloc/bin/python",
+    "os": "Darwin-19.5.0-x86_64-i386-64bit",
+    "python": "3.7.7",
+    "cpu_count": 6,
+    "args": [],
+    "state": "running",
+    "jobType": null,
+    "mode": "run",
+    "name": "olive-bird-2",
+    "project": "mmloc_concate_bucha",
+    "heartbeatAt": "2020-07-18T15:58:00.048580"
+}
